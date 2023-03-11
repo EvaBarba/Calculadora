@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calculadora</title>
+  <meta charset="utf-8">
+  <script type="text/javascript">
+      
+    //Proporciona el número que se escribe por pantalla
+    const numero = () => Number(document.getElementById("pantalla").value);
+  
+    //Proporciona la lista de números que se escriben por pantalla
+    const numeros = () => document.getElementById("pantalla").value.split(",").map(Number);
+      
+    const rellenar = (valorIntroducido) => {                        //Rellena el cuadro de texto con el valor introducido
+      document.getElementById("pantalla").value = valorIntroducido;
+    }
+      
+    const vaciar = () => {                                          //Vacia el cuadro de texto
+      rellenar() = "";
+    }
+  
+    const rellenar_info = () => {
+        const num = numero();
+        let mensaje = "";
+        if (Number.isNaN(num)) {
+            mensaje = "Error";
+        } else {
+            if (num < 100) {
+                mensaje = "Info: El resultado es menor que 100";
+            } else if (num < 200){
+                mensaje = "Info: El resultado está entre 100 y 200";
+            } else {
+                mensaje = "Info: El resultado es superior a 200";
+            }
+        }
+      
+        document.getElementById("info").innerHTML = mensaje;
+    }
+  
+    const validarNumero = () => {
+        if (Number.isNaN(numero())) {
+            rellenar("Error");
+            return false;
+        }
+        return true;
+    }
+  
+    const validarCSV = () => {
+        if (numeros().some(Number.isNaN)){
+            rellenar("Error");
+            return false;
+        }
+        return true;
+    }
+    
+  
+  
+    //OPERACIONES UNITARIAS---------------------------------------------
+    
+    const cuadrado = () => {                                        //Hace el cuadrado de la función
+      if (!validarNumero()) return;
+      let num = numero();
+      rellenar(num * num);
+      
+      rellenar_info();
+    }
+  
+    const mod = () => {                                        //Hace el valor absoluto de la función
+    if (!validarNumero()) return;
+     let num = numero();
+     if (num >= 0) {
+         rellenar(num);
+     } else {
+         rellenar(-num);
+     }
+    
+     rellenar_info();
+   }
+   
+   const fact = () => {                                        //Hace el factorial de la función
+     if (!validarNumero()) return;
+     let num = numero();
+     let f = 1;
+     for(let i = 1; i<num+1; i++){
+         f *= i;
+     }
+     rellenar(f);
+     
+     rellenar_info();
+   }
+    
+    
+   //OPERCIONES BINARIAS---------------------------------------------
+   
+   let acumulador = 0;
+   let operador = "";
+   
+   const add = () => {
+      if (!validarNumero()) return;
+      operador = "+";
+      acumula(numero());
+      document.getElementById("pantalla").value = "";   //VACIAR
+   }
+   
+   const sub = () => {
+      if (!validarNumero()) return;
+      operador = "-";
+      acumulador = numero();
+      document.getElementById("pantalla").value = "";   //VACIAR
+   }
+   
+   const mul = () => {
+      if (!validarNumero()) return;
+      acumulador = 1;
+      operador = "*";
+      acumula(numero());
+      document.getElementById("pantalla").value = "";   //VACIAR
+   }
+  
+   const div = () => {
+      if (!validarNumero()) return;
+      acumulador = numero();
+      operador = "/";
+      document.getElementById("pantalla").value = "";   //VACIAR
+   }
+  
+   const acumula = (num) => {
+      switch (operador) {
+          case "":
+            acumulador = num;
+            break;
+          case "+":
+            acumulador += num;
+            break;
+          case "-":
+            acumulador = acumulador - num;
+            break;
+          case "*":
+            acumulador *= num;
+            break;
+          case "/":
+            acumulador = acumulador/num;
+            break;
+      }
+   }
+  
+  
+   const eq = () => {
+       if (!validarNumero()) return;
+       acumula(numero());
+       rellenar(acumulador);
+       rellenar_info();
+       if (operador = ""){
+           acumulador = acumulador;
+       } else {
+           acumulador = 0;
+       }
+       operador = "";
+   }
+  
+  
+   //OPERCIONES CSV---------------------------------------------
+   
+   const sumatorio = () => {
+       if (!validarCSV()) return;
+       rellenar(numeros().reduce((total, n) => total + n, 0));
+       rellenar_info();
+   }
+  
+   const ordenar = () => {
+       if (!validarCSV()) return;
+       rellenar(numeros().sort((a, b) => a - b).join(","));
+       rellenar_info();
+       rellenar_info("Lista");
+   }
+  
+   const revertir = () => {
+       if (!validarCSV()) return;
+       rellenar(numeros().reverse().join(","));
+       rellenar_info("Lista");
+   }
+  
+   const quitar = () => {
+       if (!validarCSV()) return;
+       rellenar(numeros().slice(0,-1).join(","));
+       rellenar_info("Lista");
+   }
+  
+   //FIN/////////////////////////////////////////////////////////
+    
+   </script>
+</head>
+<body>
+  
+  <h1>Calculadora de CORE</h1>
+  
+  Número:
+  <input type="text" id="pantalla" onclick="vaciar()">
+    
+  <h2 id="info" class="grande" title="Info sobre el número">Info sobre el número</h2>
+    
+  <b>Operaciones unitarias</b>
+    <br>
+    <button id="cuadrado" onclick="cuadrado()">x<sup>2</sup></button>
+    <button id="modulo" onclick="mod()">Mod</button>
+    <button id="factorial" onclick="fact()">!n</button>
+    
+  <br><b>Operaciones binarias</b>
+    <br>
+    <button id="suma" onclick="add()">+</button>
+    <button id="resta" onclick="sub()">-</button>
+    <button id="multiplicacion" onclick="mul()">*</button>
+    <button id="division" onclick="div()">/</button>
+    <button id="igual" onclick="eq()">=</button>
+  
+  <br><b>Operaciones en formato CSV</b>
+    <br>
+    <button id="sumatorio" onclick="sumatorio()">Σx</button>
+    <button id="ordenar" onclick="ordenar()">ordenar</button>
+    <button id="revertir" onclick="revertir()">revertir</button>
+    <button id="quitar" onclick="quitar()">quitar</button>
+ </body>
+</html>
